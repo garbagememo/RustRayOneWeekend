@@ -1,0 +1,10 @@
+[package]
+name ="RustRay1Weekend"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+getopts = "0.2.21"
+image = "0.25.5"
+rand = "*"
+rayon = "*"
