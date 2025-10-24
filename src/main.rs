@@ -3,6 +3,7 @@ use raymod::*;
 
 use rayon::prelude::*;
 
+use std::sync::Arc;
 use std::io::Write;
 
 fn ray_color(r: &Ray,world:&dyn Shape,depth:i64) -> Vec3 {
@@ -11,8 +12,13 @@ fn ray_color(r: &Ray,world:&dyn Shape,depth:i64) -> Vec3 {
     }
     let hit_info=world.hit(&r,EPS,f64::MAX);
     if let Some(hit)=hit_info {
-        let target =hit.p+hit.n+Vec3::random_hemisphere();
-        ray_color(&Ray::new(hit.p,target-hit.p),world,depth-1)*0.5
+        let scatter_info = hit.m.scatter(r, &hit);
+        if let Some(scatter)=scatter_info {
+            scatter.albedo.mult(ray_color(&scatter.ray,world,depth-1) )
+        }else{
+            return Vec3::new(0.0,0.0,0.0)
+        }
+        
     } else {
         let t=0.5*(r.d.norm().y+1.0);
         Vec3::new(1.0,1.0,1.0)*(1.0-t)+Vec3::new(0.5,0.7,1.0)*t
@@ -42,8 +48,21 @@ fn main() {
 	let MAX_DEPTH:i64=32;
 
     let mut world = ShapeList::new();
-    world.push(Box::new(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5)));
-    world.push(Box::new(Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0)));
+    world.push(Box::new(Sphere::new(
+        Vec3::new(0.6, 0.0, -1.0),
+        0.5,
+        Arc::new(Lambertian::new(Color::new(0.1, 0.2, 0.5))),
+    )));
+    world.push(Box::new(Sphere::new(
+        Vec3::new(-0.6, 0.0, -1.0),
+        0.5,
+        Arc::new(Lambertian::new(Color::new(0.8, 0.0, 0.0))),
+    )));
+    world.push(Box::new(Sphere::new(
+        Vec3::new(0.0, -100.5, -1.0),
+        100.0,
+        Arc::new(Lambertian::new(Color::new(0.8, 0.8, 0.0))),
+    )));
 
 
     let bands: Vec<(usize, &mut [Color])> = image.chunks_mut(w as usize).enumerate().collect();
