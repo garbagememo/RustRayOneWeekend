@@ -3,7 +3,6 @@
 use std::sync::Arc;
 use std::f64::consts::*;
 
-
 #[derive(Debug)]
 pub struct Ray {
     pub o: Vec3,
@@ -19,6 +18,7 @@ impl Ray {
     }
 }
 
+#[allow(dead_code)]
 pub enum Refl {
     Diff,
     Spec,

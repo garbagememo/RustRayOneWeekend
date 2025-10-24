@@ -4,6 +4,7 @@ use std::fs;
 use std::io::Write;
 use rayon::prelude::*;
 
+
 pub const EPS:f64 = 0.00001;
 
 pub fn random() -> f64 {
@@ -23,6 +24,7 @@ pub struct Vec3 {
 
 pub type Color = Vec3;
 
+#[allow(dead_code)]
 impl Vec3 {
     pub fn new(x: f64, y: f64, z: f64) -> Vec3 {
         Vec3 {x, y, z}
@@ -49,6 +51,10 @@ impl Vec3 {
     pub fn random() -> Vec3{
         return Vec3::new(random(),random(),random())
     }
+    pub fn random_full() ->Vec3 {
+        let x = random();
+        return Vec3::new(x,x,x)
+    }
     pub fn vec3_random_range(a:f64,b:f64) ->Vec3 {
         return Vec3::new(random_range(a,b),random_range(a,b),random_range(a,b))
     }
@@ -60,9 +66,19 @@ impl Vec3 {
             }
         }
     }
-    pub fn reflect(&self,normal:Vec3)->Vec3{
+    pub fn reflect(&self,normal:Vec3) -> Vec3 {
         *self - normal*2.0*self.dot(&normal)
-}    
+    }
+    pub fn refract(&self, normal: Self, ni_over_nt: f64) -> Option<Vec3> {
+        let uv = self.norm();
+        let dt = uv.dot(&normal);
+        let d = 1.0 - ni_over_nt*ni_over_nt * (1.0 - dt*dt);
+        if d > 0.0 {
+            Some((uv - normal * dt)*(-1.0*ni_over_nt) - normal * d.sqrt())
+        } else {
+            None
+        }
+    }
 }
 
 impl Add for Vec3 {
@@ -121,6 +137,8 @@ fn to_int(x: f64) -> u8 {
     (clamp(x).powf(1.0 / 2.2) * 255.0 + 0.5) as u8
 }
 
+
+#[allow(dead_code)]
 fn save_ppm_file(filename: &str, image: Vec<Color>, width: usize, height: usize) {
     let mut f = fs::File::create(filename).unwrap();
     writeln!(f, "P3\n{} {}\n{}", width, height, 255).unwrap();
