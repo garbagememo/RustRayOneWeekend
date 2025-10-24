@@ -51,17 +51,27 @@ fn main() {
     world.push(Box::new(Sphere::new(
         Vec3::new(0.6, 0.0, -1.0),
         0.5,
-        Arc::new(Lambertian::new(Color::new(0.1, 0.2, 0.5))),
+        Arc::new(Lambertian::new(Vec3::new(0.1, 0.2, 0.5))),
     )));
     world.push(Box::new(Sphere::new(
         Vec3::new(-0.6, 0.0, -1.0),
         0.5,
-        Arc::new(Metal::new(Color::new(0.8, 0.8, 0.8),1.0)),
+        Arc::new(Dielectric::new(1.5)),
+    )));
+    world.push(Box::new(Sphere::new(
+        Vec3::new(-0.6, 0.0, -1.0),
+        -0.45,
+        Arc::new(Dielectric::new(1.5)),
+    )));
+    world.push(Box::new(Sphere::new(
+        Vec3::new(-0.0, -0.35, -0.8),
+        0.15,
+        Arc::new(Metal::new(Vec3::new(0.8, 0.8, 0.8), 0.2)),
     )));
     world.push(Box::new(Sphere::new(
         Vec3::new(0.0, -100.5, -1.0),
         100.0,
-        Arc::new(Lambertian::new(Color::new(0.8, 0.8, 0.0))),
+        Arc::new(Lambertian::new(Vec3::new(0.8, 0.8, 0.0))),
     )));
 
 
@@ -69,7 +79,7 @@ fn main() {
     bands.into_par_iter().for_each(|(y, band)| {
         for x in 0..w {
             let mut r = Vec3::new(0.0,0.0,0.0);
-            for spp in 0..samps {
+            for _spp in 0..samps {
                 let u=(x as f64 + random() ) /(w as f64);
                 let v=(y as f64 + random() ) /(h as f64);
                 
