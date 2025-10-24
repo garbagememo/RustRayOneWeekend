@@ -30,7 +30,7 @@ impl Vec3 {
     pub fn zero() -> Vec3 {
         Vec3::new(0.0, 0.0, 0.0)
     }
-    pub fn mult(&self, b: &Vec3) -> Vec3 {
+    pub fn mult(&self, b: Vec3) -> Vec3 {
         Vec3::new(self.x * b.x, self.y * b.y, self.z * b.z)
     }
     pub fn norm(mut self) -> Vec3 {

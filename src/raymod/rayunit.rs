@@ -1,5 +1,6 @@
 ﻿use crate::raymod::*;
 
+use std::sync::Arc;
 use std::f64::consts::*;
 
 
@@ -28,11 +29,12 @@ pub struct HitInfo {
     pub t: f64,
     pub p: Vec3,
     pub n: Vec3,
+    pub m: Arc <dyn Material>,
 }
 
 impl HitInfo {
-    pub fn new(t:f64,p:Vec3,n:Vec3)->Self {
-        Self{t,p,n}
+    pub fn new(t:f64,p:Vec3,n:Vec3,m: Arc <dyn Material>)->Self {
+        Self{t,p,n,m}
     }
 }
 
@@ -43,11 +45,12 @@ pub trait Shape: Sync {
 pub struct Sphere {
     pub center: Vec3,
     pub radius: f64,
+    pub material:Arc<dyn Material> 
 }
 
 impl Sphere {
-    pub const fn new(center: Vec3, radius: f64) -> Self {
-        Self { center, radius }
+    pub const fn new(center: Vec3, radius: f64,material:Arc<dyn Material>) -> Self {
+        Self { center, radius ,material}
     }
 }
 
@@ -64,12 +67,12 @@ impl Shape for Sphere {
             let temp = (-b - root) / (2.0*a);
             if temp < t1 && temp > t0 {
                 let p=r.at(temp);
-                return Some(HitInfo::new(temp,p,(p- self.center)/self.radius));
+                return Some(HitInfo::new(temp, p, (p- self.center)/self.radius, Arc::clone(&self.material)) );
             }
             let temp = (-b + root) / (2.0*a);
             if temp < t1 && temp > t0 {
                 let p=r.at(temp);
-                return Some(HitInfo::new(temp,p,(p- self.center)/self.radius));
+                return Some(HitInfo::new(temp,p,(p- self.center)/self.radius,Arc::clone(&self.material)) );
             }
         }
         None
