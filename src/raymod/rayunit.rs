@@ -1,10 +1,7 @@
-use crate::raymod::*;
+﻿use crate::raymod::*;
 
 use std::f64::consts::*;
 
-pub fn random() -> f64 {
-    rand::random::<f64>()
-}
 
 #[derive(Debug)]
 pub struct Ray {
@@ -64,7 +61,7 @@ impl Shape for Sphere {
 
         if d > 0.0 {
             let root = d.sqrt();
-            let temp = (-b - root) / a;
+            let temp = (-b - root) / (2.0*a);
             if temp < t1 && temp > t0 {
                 let p=r.at(temp);
                 return Some(HitInfo::new(temp,p,(p- self.center)/self.radius));
