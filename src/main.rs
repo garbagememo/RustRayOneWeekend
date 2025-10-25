@@ -31,20 +31,21 @@ fn main() {
     let args = parameters();
     println!("{:?}", args);
     
-    let aspect=16.0/9.0;
+    let ASPECT_RATIO=16.0/9.0;
     let w: usize = 384;
-    let h: usize = ((w as f64)/aspect) as usize;
+    let h: usize = ((w as f64)/ASPECT_RATIO) as usize;
     let samps:usize = 128;
 
     let mut image = vec![Color::zero(); (w * h) as usize];
 
-    let v_h=2.0;
-    let v_w=aspect*v_h;
-    let f_l=1.0;
-    let origin=Vec3::new(0.0,0.0,0.0);
-    let horizontal=Vec3::new(v_w,0.0,0.0);
-    let vertical=Vec3::new(0.0,v_h,0.0);
-    let luc=origin-horizontal/2.0+vertical/2.0-Vec3::new(0.0,0.0,f_l);
+    let cam = Camera::new(
+    Vec3::new(-2.0, 2.0, 1.0),
+    Vec3::new(0.0, 0.0, -1.0),
+    Vec3::new(0.0, 1.0, 0.0),
+    20.0,
+    ASPECT_RATIO,
+);
+	
 	let MAX_DEPTH:i64=32;
 
     let mut world = ShapeList::new();
@@ -82,8 +83,7 @@ fn main() {
             for _spp in 0..samps {
                 let u=(x as f64 + random() ) /(w as f64);
                 let v=(y as f64 + random() ) /(h as f64);
-                
-                let ray=Ray::new(origin,luc+horizontal*u-vertical*v-origin);
+                let ray = cam.get_ray(u, v);
                 r = r +ray_color(&ray,&world,MAX_DEPTH)/(samps as f64);
             }
             band[x as usize] = r; 
