@@ -88,8 +88,8 @@ impl Material for Dielectric {
                                              Vec3::new(1.0,1.0,1.0)))
             }
         }
-                Some(ScatterInfo::new(Ray::new(hit.p, reflected),
-                                      Vec3::new(1.0,1.0,1.0)))
+        Some(ScatterInfo::new(Ray::new(hit.p, reflected),
+                              Vec3::new(1.0,1.0,1.0)))
     }
 }
 
