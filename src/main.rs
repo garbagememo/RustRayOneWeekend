@@ -38,41 +38,51 @@ fn main() {
 
     let mut image = vec![Color::zero(); (w * h) as usize];
 
+// Camera
+
+    let lookfrom = Vec3::new(3.0, 3.0, 2.0);
+    let lookat = Vec3::new(0.0, 0.0, -1.0);
+    let vup = Vec3::new(0.0, 1.0, 0.0);
+    let dist_to_focus = (lookfrom - lookat).length().sqrt();
+    let aperture = 2.0;
+
     let cam = Camera::new(
-    Vec3::new(-2.0, 2.0, 1.0),
-    Vec3::new(0.0, 0.0, -1.0),
-    Vec3::new(0.0, 1.0, 0.0),
-    20.0,
-    ASPECT_RATIO,
-);
-	
+        lookfrom,
+        lookat,
+        vup,
+        20.0,
+        ASPECT_RATIO,
+        aperture,
+        dist_to_focus,
+    );
+    
 	let MAX_DEPTH:i64=32;
 
     let mut world = ShapeList::new();
     world.push(Box::new(Sphere::new(
-        Vec3::new(0.6, 0.0, -1.0),
-        0.5,
-        Arc::new(Lambertian::new(Vec3::new(0.1, 0.2, 0.5))),
-    )));
-    world.push(Box::new(Sphere::new(
-        Vec3::new(-0.6, 0.0, -1.0),
-        0.5,
-        Arc::new(Dielectric::new(1.5)),
-    )));
-    world.push(Box::new(Sphere::new(
-        Vec3::new(-0.6, 0.0, -1.0),
-        -0.45,
-        Arc::new(Dielectric::new(1.5)),
-    )));
-    world.push(Box::new(Sphere::new(
-        Vec3::new(-0.0, -0.35, -0.8),
-        0.15,
-        Arc::new(Metal::new(Vec3::new(0.8, 0.8, 0.8), 0.2)),
-    )));
-    world.push(Box::new(Sphere::new(
         Vec3::new(0.0, -100.5, -1.0),
         100.0,
         Arc::new(Lambertian::new(Vec3::new(0.8, 0.8, 0.0))),
+    )));
+    world.push(Box::new(Sphere::new(
+        Vec3::new(0.0, 0.0, -1.0),
+        0.5,
+        Arc::new(Lambertian::new(Vec3::new(0.1,0.2,0.5))),
+    )));
+    world.push(Box::new(Sphere::new(
+        Vec3::new(-1.0, 0.0, -1.0),
+        0.5,
+        Arc::new(Dielectric::new(1.5)),
+    )));
+    world.push(Box::new(Sphere::new(
+        Vec3::new(-1.0, -0.0, -1.0),
+        -0.4,
+        Arc::new(Dielectric::new(1.5)),
+    )));
+    world.push(Box::new(Sphere::new(
+        Vec3::new(1.0, 0.0, -1.0),
+        0.5,
+        Arc::new(Metal::new(Vec3::new(0.8, 0.6, 0.2),0.5)),
     )));
 
 
