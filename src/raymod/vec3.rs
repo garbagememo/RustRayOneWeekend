@@ -4,9 +4,6 @@ use std::fs;
 use std::io::Write;
 use rayon::prelude::*;
 
-
-pub const EPS:f64 = 0.00001;
-
 pub fn random() -> f64 {
     rand::random::<f64>()
 }
