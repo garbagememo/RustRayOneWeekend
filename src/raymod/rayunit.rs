@@ -142,6 +142,58 @@ impl ShapeList {
     pub fn push(&mut self, object: Box<dyn Shape>) {
         self.objects.push(object);
     }
+    pub fn random_scene(&mut self){
+        self.push(Box::new(Sphere::new(
+            Vec3::new(0.0, -1000.0, 0.0),
+            1000.0,
+            Arc::new(Lambertian::new(Vec3::new(0.5, 0.5, 0.5))),
+        )));
+        for a in -11..11 {
+            for b in -11..11 {
+                let choose_mat=random();
+                let center=Vec3::new(a as f64 + 0.9 * random(), 0.2, b as f64 + 0.9 * random() );
+                if (center-Vec3::new(4.0,0.2,0.0)).length().sqrt() > 0.9 {
+                    if choose_mat < 0.8 {
+                        // diffuse
+                        let albedo = Vec3::random().mult(Vec3::random() );
+                        self.push(Box::new(Sphere::new(
+                            center,
+                            0.2,
+                            Arc::new(Lambertian::new(albedo)),
+                        )));                    
+                    }else if choose_mat <0.95{
+                        // Metal
+                        let fuzz= random_range(0.0,0.5);
+                        let albedo=Vec3::vec3_random_range(0.5,1.0);
+                        self.push(Box::new(Sphere::new(
+                            center,
+                            0.2,
+                            Arc::new(Metal::new(albedo,fuzz)),
+                        )));
+                    } else {
+                        // glass
+                        self.push(Box::new(Sphere::new(
+                            center,
+                            0.2,
+                            Arc::new(Dielectric::new(1.5)),
+                        )));
+                    }
+                }
+            }
+        }
+        self.push(Box::new(Sphere::new(
+            Vec3::new(0.0,1.0,0.0),
+            1.0,
+            Arc::new(Dielectric::new(1.5)),)));
+        self.push(Box::new(Sphere::new(
+            Vec3::new(-4.0,1.0,0.0),
+            1.0,
+            Arc::new(Lambertian::new(Vec3::new(0.4,0.2,0.1)),))));
+        self.push(Box::new(Sphere::new(
+            Vec3::new(4.0,1.0,0.0),
+            1.0,
+            Arc::new(Metal::new(Vec3::new(0.7,0.6,0.5),0.0),))));
+    }
 }
 
 impl Shape for ShapeList {
