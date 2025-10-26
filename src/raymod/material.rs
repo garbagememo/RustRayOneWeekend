@@ -77,19 +77,19 @@ impl Material for Dielectric {
         let (outward_normal, ni_over_nt,cosine) = {
             let dot =  ray.d.dot(&hit.n);
             if dot > 0.0 {
-                (hit.n*-1.0, self.ri, self.ri*dot/ray.d.length() )
+                (hit.n*-1.0, self.ri,self.ri * dot / ray.d.length().sqrt() )
             } else {
-                (hit.n, 1.0/self.ri,  dot*(-1.0)/ray.d.length()  )
+                (hit.n, 1.0/self.ri ,self.ri * dot / ray.d.length().sqrt()*-1.0  )
             }
         };
         if let Some(refracted) = (ray.d*-1.0).refract(outward_normal, ni_over_nt) {
             if Vec3::random_full().x > Self::schlick(cosine,self.ri) {
                 return Some(ScatterInfo::new(Ray::new(hit.p, refracted),
                                              Vec3::new(1.0,1.0,1.0)))
-            }
+            } 
+            
         }
-        Some(ScatterInfo::new(Ray::new(hit.p, reflected),
-                              Vec3::new(1.0,1.0,1.0)))
+        Some(ScatterInfo::new(Ray::new(hit.p, reflected), Vec3::new(1.0,1.0,1.0)))
     }
 }
 
